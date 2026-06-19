@@ -921,71 +921,50 @@
     }
   });
   // ── CONTACT FORM (EmailJS) ──
-  // Setup steps (free, 200 emails/month):
-  // 1. Sign up at https://www.emailjs.com
-  // 2. Add an Email Service (Gmail/Outlook) → copy the Service ID
-  // 3. Create an Email Template → copy the Template ID
-  //    Template variables used: {{from_name}}, {{from_email}}, {{subject}}, {{message}}
-  // 4. Go to Account → API Keys → copy your Public Key
-  // Then paste all three below:
+  emailjs.init("2wB_cc0y-Q0NTtl8N");
 
-  const EJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'user_xxxxxxxxxxxxxx'
-  const EJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_xxxxxxx'
-  const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xxxxxxx'
+  document.getElementById("btn-send").addEventListener("click", async () => {
+    const name = document.getElementById("cf-name").value.trim();
+    const email = document.getElementById("cf-email").value.trim();
+    const subject = document.getElementById("cf-subject").value.trim();
+    const message = document.getElementById("cf-msg").value.trim();
+    const errorBox = document.getElementById("form-error");
+    const successBox = document.getElementById("form-success");
 
-  if (EJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-    emailjs.init({ publicKey: EJS_PUBLIC_KEY });
-  }
+    errorBox.style.display = "none";
+    successBox.style.display = "none";
 
-  document.getElementById('btn-send').addEventListener('click', async () => {
-    const name    = document.getElementById('cf-name').value.trim();
-    const email   = document.getElementById('cf-email').value.trim();
-    const subject = document.getElementById('cf-subject').value.trim();
-    const msg     = document.getElementById('cf-msg').value.trim();
-    const errEl   = document.getElementById('form-error');
-    const sucEl   = document.getElementById('form-success');
-    const btn     = document.getElementById('btn-send');
-
-    errEl.style.display = 'none';
-
-    if (!name || !email || !msg) {
-      errEl.textContent = 'Please fill in your name, email, and message.';
-      errEl.style.display = 'block'; return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errEl.textContent = 'Please enter a valid email address.';
-      errEl.style.display = 'block'; return;
-    }
-
-    // Demo mode — keys not set yet
-    if (EJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-      btn.style.display = 'none';
-      sucEl.style.display = 'block';
-      sucEl.textContent = '✓ EmailJS connected! Add your Public Key, Service ID & Template ID in the script to go live.';
+    if (!name || !email || !message) {
+      errorBox.textContent = "Please fill all required fields.";
+      errorBox.style.display = "block";
       return;
     }
 
+    const btn = document.getElementById("btn-send");
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = "Sending…";
 
     try {
-      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-        from_name:  name,
-        from_email: email,
-        subject:    subject || 'Portfolio Contact',
-        message:    msg,
+      await emailjs.send("service_s5uzop", "template_th3futv", {
+        name: name,
+        email: email,
+        title: subject,
+        message: message,
+        time: new Date().toLocaleString()
       });
-      btn.style.display = 'none';
-      sucEl.style.display = 'block';
-      document.getElementById('cf-name').value    = '';
-      document.getElementById('cf-email').value   = '';
-      document.getElementById('cf-subject').value = '';
-      document.getElementById('cf-msg').value     = '';
-    } catch (err) {
+      successBox.textContent = "✓ Message sent successfully!";
+      successBox.style.display = "block";
+      btn.style.display = "none";
+      document.getElementById("cf-name").value = "";
+      document.getElementById("cf-email").value = "";
+      document.getElementById("cf-subject").value = "";
+      document.getElementById("cf-msg").value = "";
+    } catch (error) {
+      errorBox.textContent = "Failed to send message. Please try again.";
+      errorBox.style.display = "block";
       btn.disabled = false;
-      btn.textContent = 'Send Message →';
-      errEl.textContent = 'Something went wrong. Email me directly at ay650794@gmail.com';
-      errEl.style.display = 'block';
+      btn.textContent = "Send Message →";
+      console.error(error);
     }
   });
 
