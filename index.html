@@ -11,6 +11,7 @@
     :root {
       --bg: #0A0F1E;
       --surface: #111827;
+      --nav-bg: rgba(10,15,30,0.85);
       --border: #1E2A3B;
       --accent: #6366F1;
       --accent-dim: rgba(99,102,241,0.12);
@@ -20,6 +21,20 @@
       --mono: 'JetBrains Mono', monospace;
       --display: 'Space Grotesk', sans-serif;
       --body: 'Inter', sans-serif;
+      --tag-bg: rgba(255,255,255,0.04);
+    }
+
+    [data-theme="light"] {
+      --bg: #F8F9FC;
+      --surface: #FFFFFF;
+      --nav-bg: rgba(248,249,252,0.88);
+      --border: #E2E8F0;
+      --accent: #4F46E5;
+      --accent-dim: rgba(79,70,229,0.08);
+      --text: #0F172A;
+      --text-muted: #94A3B8;
+      --text-soft: #475569;
+      --tag-bg: rgba(0,0,0,0.03);
     }
 
     html { scroll-behavior: smooth; }
@@ -31,6 +46,7 @@
       font-size: 15px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
     }
 
     /* ── NAV ── */
@@ -39,10 +55,38 @@
       display: flex; justify-content: space-between; align-items: center;
       padding: 20px 60px;
       backdrop-filter: blur(20px);
-      background: rgba(10,15,30,0.85);
+      background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
     }
-    .nav-logo {
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+
+    .theme-toggle {
+      width: 36px; height: 36px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--text-soft);
+    }
+    .theme-toggle:hover { border-color: var(--accent); background: var(--accent-dim); }
+
+    .btn-resume {
+      padding: 8px 18px;
+      background: var(--accent);
+      color: #fff;
+      border: none; border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 500;
+      letter-spacing: 0.06em;
+      cursor: pointer; text-decoration: none;
+      transition: opacity 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-resume:hover { opacity: 0.85; }
       font-family: var(--mono);
       font-size: 13px;
       color: var(--accent);
@@ -214,7 +258,7 @@
     .tag {
       font-size: 12px;
       color: var(--text-soft);
-      background: rgba(255,255,255,0.04);
+      background: var(--tag-bg);
       border: 1px solid var(--border);
       padding: 3px 10px;
       border-radius: 4px;
@@ -365,30 +409,91 @@
     }
 
     /* ── CONTACT ── */
-    #contact {
-      text-align: center;
-      padding-bottom: 120px;
-    }
-    #contact .section-title { margin-bottom: 16px; }
+    #contact { padding-bottom: 120px; }
+    #contact .section-title { margin-bottom: 8px; }
     .contact-sub {
       font-size: 15px;
       color: var(--text-soft);
-      max-width: 380px;
-      margin: 0 auto 40px;
+      margin-bottom: 48px;
     }
-    .contact-links { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .contact-info { display: flex; flex-direction: column; gap: 14px; }
     .contact-link {
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: 10px;
       font-family: var(--mono);
       font-size: 12px;
       color: var(--text-soft);
       text-decoration: none;
       border: 1px solid var(--border);
-      padding: 10px 18px;
-      border-radius: 6px;
-      transition: border-color 0.2s, color 0.2s;
+      padding: 12px 18px;
+      border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
-    .contact-link:hover { border-color: var(--accent); color: var(--text); }
+    .contact-link:hover { border-color: var(--accent); color: var(--text); background: var(--accent-dim); }
+    .contact-link-icon { font-size: 14px; width: 20px; text-align: center; }
+
+    /* form */
+    .contact-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .field input, .field textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: var(--body);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: var(--text-muted); }
+    .field input:focus, .field textarea:focus { border-color: var(--accent); }
+    .btn-send {
+      padding: 13px 28px;
+      background: var(--accent);
+      color: #fff;
+      border: none; border-radius: 8px;
+      font-family: var(--body);
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      align-self: flex-start;
+    }
+    .btn-send:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .form-success {
+      display: none;
+      padding: 20px 24px;
+      background: rgba(99,241,130,0.08);
+      border: 1px solid rgba(99,241,130,0.2);
+      border-radius: 8px;
+      font-size: 14px;
+      color: #6bf577;
+    }
+    .form-error {
+      display: none;
+      font-size: 12px;
+      color: #f87171;
+      font-family: var(--mono);
+    }
+    @media (max-width: 780px) {
+      .contact-layout { grid-template-columns: 1fr; gap: 36px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -408,6 +513,7 @@
       #hero, section { padding-left: 24px; padding-right: 24px; }
       .hero-stats { gap: 28px; flex-wrap: wrap; }
       .edu-row { grid-template-columns: 1fr; }
+      .btn-resume span { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -427,6 +533,10 @@
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <div class="nav-right">
+    <button class="theme-toggle" id="theme-btn" aria-label="Toggle theme">🌙</button>
+    <a href="Abhishek_new_resume.pdf" download="Abhishek_Yadav_Resume.pdf" class="btn-resume">↓ Resume</a>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -440,7 +550,8 @@
     to fully deployed e-commerce platforms.
   </p>
   <div class="hero-cta">
-    <a href="mailto:ay650794@gmail.com" class="btn-primary">Get in touch</a>
+    <a href="#contact" class="btn-primary">Get in touch</a>
+    <a href="Abhishek_new_resume.pdf" download="Abhishek_Yadav_Resume.pdf" class="btn-ghost">↓ Download Resume</a>
     <a href="https://github.com/Yadav4542" target="_blank" class="btn-ghost">GitHub ↗</a>
   </div>
   <div class="hero-stats">
@@ -670,12 +781,49 @@
 <section id="contact">
   <div class="section-eyebrow">Contact</div>
   <div class="section-title">Let's work together</div>
-  <p class="contact-sub">Open to Software Developer and Frontend Developer roles. Let's connect.</p>
-  <div class="contact-links">
-    <a href="mailto:ay650794@gmail.com" class="contact-link">✉ ay650794@gmail.com</a>
-    <a href="https://linkedin.com/in/abhishek-yadav4149" target="_blank" class="contact-link">in/ LinkedIn</a>
-    <a href="https://github.com/Yadav4542" target="_blank" class="contact-link">gh/ GitHub</a>
-    <a href="tel:+917620246812" class="contact-link">☎ +91-7620246812</a>
+  <p class="contact-sub">Open to Software Developer and Frontend Developer roles. Drop a message — I'll reply within 24 hours.</p>
+
+  <div class="contact-layout">
+    <!-- Left: info links -->
+    <div class="contact-info">
+      <a href="mailto:ay650794@gmail.com" class="contact-link">
+        <span class="contact-link-icon">✉</span> ay650794@gmail.com
+      </a>
+      <a href="tel:+917620246812" class="contact-link">
+        <span class="contact-link-icon">☎</span> +91-7620246812
+      </a>
+      <a href="https://linkedin.com/in/abhishek-yadav4149" target="_blank" class="contact-link">
+        <span class="contact-link-icon">in</span> LinkedIn
+      </a>
+      <a href="https://github.com/Yadav4542" target="_blank" class="contact-link">
+        <span class="contact-link-icon">gh</span> GitHub
+      </a>
+    </div>
+
+    <!-- Right: form -->
+    <div class="contact-form" id="contact-form">
+      <div class="form-row">
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input type="text" id="cf-name" placeholder="Your name" required />
+        </div>
+        <div class="field">
+          <label for="cf-email">Email</label>
+          <input type="email" id="cf-email" placeholder="your@email.com" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="cf-subject">Subject</label>
+        <input type="text" id="cf-subject" placeholder="What's this about?" />
+      </div>
+      <div class="field">
+        <label for="cf-msg">Message</label>
+        <textarea id="cf-msg" rows="5" placeholder="Tell me about the role or project..." required></textarea>
+      </div>
+      <div class="form-error" id="form-error">Something went wrong. Please try again.</div>
+      <button class="btn-send" id="btn-send" type="button">Send Message →</button>
+      <div class="form-success" id="form-success">✓ Message sent! I'll get back to you soon.</div>
+    </div>
   </div>
 </section>
 
@@ -685,7 +833,86 @@
 </footer>
 
 <script>
-  // Typewriter effect
+  // ── THEME TOGGLE ──
+  const themeBtn = document.getElementById('theme-btn');
+  const html = document.documentElement;
+  let isDark = true;
+
+  // Restore saved preference
+  const saved = localStorage.getItem('portfolio-theme');
+  if (saved === 'light') { isDark = false; html.setAttribute('data-theme', 'light'); themeBtn.textContent = '☀️'; }
+
+  themeBtn.addEventListener('click', () => {
+    isDark = !isDark;
+    if (isDark) {
+      html.removeAttribute('data-theme');
+      themeBtn.textContent = '🌙';
+      localStorage.setItem('portfolio-theme', 'dark');
+    } else {
+      html.setAttribute('data-theme', 'light');
+      themeBtn.textContent = '☀️';
+      localStorage.setItem('portfolio-theme', 'light');
+    }
+  });
+  // ── CONTACT FORM ──
+  // Sign up free at formspree.io, create a form, and paste your form ID below
+  const FORMSPREE_ID = 'YOUR_FORM_ID'; // e.g. 'xpwzgkdo'
+
+  document.getElementById('btn-send').addEventListener('click', async () => {
+    const name    = document.getElementById('cf-name').value.trim();
+    const email   = document.getElementById('cf-email').value.trim();
+    const subject = document.getElementById('cf-subject').value.trim();
+    const msg     = document.getElementById('cf-msg').value.trim();
+    const errEl   = document.getElementById('form-error');
+    const sucEl   = document.getElementById('form-success');
+    const btn     = document.getElementById('btn-send');
+
+    errEl.style.display = 'none';
+
+    if (!name || !email || !msg) {
+      errEl.textContent = 'Please fill in your name, email, and message.';
+      errEl.style.display = 'block'; return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = 'Please enter a valid email address.';
+      errEl.style.display = 'block'; return;
+    }
+    if (FORMSPREE_ID === 'YOUR_FORM_ID') {
+      // Demo mode — show success without actually sending
+      btn.style.display = 'none';
+      sucEl.style.display = 'block';
+      sucEl.textContent = '✓ Form connected! Replace YOUR_FORM_ID in the script with your Formspree ID to receive real emails.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, subject, message: msg })
+      });
+      if (res.ok) {
+        btn.style.display = 'none';
+        sucEl.style.display = 'block';
+        document.getElementById('cf-name').value = '';
+        document.getElementById('cf-email').value = '';
+        document.getElementById('cf-subject').value = '';
+        document.getElementById('cf-msg').value = '';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Send Message →';
+      errEl.textContent = 'Something went wrong. Please email me directly at ay650794@gmail.com';
+      errEl.style.display = 'block';
+    }
+  });
+
+  // ── TYPEWRITER ──
   const roles = [
     'Frontend Developer',
     'React Native Engineer',
