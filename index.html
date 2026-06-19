@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Abhishek Yadav — Software Engineer</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     ul, ol, li { list-style: none; margin: 0; padding: 0; }
@@ -919,9 +920,22 @@
       localStorage.setItem('portfolio-theme', 'light');
     }
   });
-  // ── CONTACT FORM ──
-  // Sign up free at formspree.io, create a form, and paste your form ID below
-  const FORMSPREE_ID = 'YOUR_FORM_ID'; // e.g. 'xpwzgkdo'
+  // ── CONTACT FORM (EmailJS) ──
+  // Setup steps (free, 200 emails/month):
+  // 1. Sign up at https://www.emailjs.com
+  // 2. Add an Email Service (Gmail/Outlook) → copy the Service ID
+  // 3. Create an Email Template → copy the Template ID
+  //    Template variables used: {{from_name}}, {{from_email}}, {{subject}}, {{message}}
+  // 4. Go to Account → API Keys → copy your Public Key
+  // Then paste all three below:
+
+  const EJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'user_xxxxxxxxxxxxxx'
+  const EJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_xxxxxxx'
+  const EJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xxxxxxx'
+
+  if (EJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+    emailjs.init({ publicKey: EJS_PUBLIC_KEY });
+  }
 
   document.getElementById('btn-send').addEventListener('click', async () => {
     const name    = document.getElementById('cf-name').value.trim();
@@ -942,11 +956,12 @@
       errEl.textContent = 'Please enter a valid email address.';
       errEl.style.display = 'block'; return;
     }
-    if (FORMSPREE_ID === 'YOUR_FORM_ID') {
-      // Demo mode — show success without actually sending
+
+    // Demo mode — keys not set yet
+    if (EJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
       btn.style.display = 'none';
       sucEl.style.display = 'block';
-      sucEl.textContent = '✓ Form connected! Replace YOUR_FORM_ID in the script with your Formspree ID to receive real emails.';
+      sucEl.textContent = '✓ EmailJS connected! Add your Public Key, Service ID & Template ID in the script to go live.';
       return;
     }
 
@@ -954,25 +969,22 @@
     btn.textContent = 'Sending…';
 
     try {
-      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, subject, message: msg })
+      await emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
+        from_name:  name,
+        from_email: email,
+        subject:    subject || 'Portfolio Contact',
+        message:    msg,
       });
-      if (res.ok) {
-        btn.style.display = 'none';
-        sucEl.style.display = 'block';
-        document.getElementById('cf-name').value = '';
-        document.getElementById('cf-email').value = '';
-        document.getElementById('cf-subject').value = '';
-        document.getElementById('cf-msg').value = '';
-      } else {
-        throw new Error('Failed');
-      }
-    } catch {
+      btn.style.display = 'none';
+      sucEl.style.display = 'block';
+      document.getElementById('cf-name').value    = '';
+      document.getElementById('cf-email').value   = '';
+      document.getElementById('cf-subject').value = '';
+      document.getElementById('cf-msg').value     = '';
+    } catch (err) {
       btn.disabled = false;
       btn.textContent = 'Send Message →';
-      errEl.textContent = 'Something went wrong. Please email me directly at ay650794@gmail.com';
+      errEl.textContent = 'Something went wrong. Email me directly at ay650794@gmail.com';
       errEl.style.display = 'block';
     }
   });
